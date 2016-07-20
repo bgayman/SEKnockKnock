@@ -1,0 +1,188 @@
+<html>
+  <head>
+    <title>Knock knock</title>
+    <style>
+      body{
+        background: blue; /* For browsers that do not support gradients */
+        background: -webkit-linear-gradient(blue, lightgray, yellow); /* For Safari 5.1 to 6.0 */
+        background: -o-linear-gradient(blue, lightgray, yellow); /* For Opera 11.1 to 12.0 */
+        background: -moz-linear-gradient(blue, lightgray, yellow); /* For Firefox 3.6 to 15 */
+        background: linear-gradient(blue, lightgray, yellow); /* Standard syntax */
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+        border: 0;
+      }
+      .blur{
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+        border: 0;
+        -webkit-filter: blur(20px);
+        -moz-filter: blur(20px);
+        -o-filter: blur(20px);
+        -ms-filter: blur(20px);
+        filter: blur(20px);
+        opacity: 0.4;
+      }
+      .face{
+        position: fixed;
+        width: 180px;
+        height: 230px;
+        top: 35%;
+        left: 50%;
+        margin-top: -115px; /* Negative half of height. */
+        margin-left: -90px;
+      }
+      #faceImage{
+        transition: all 0.2s ease-in-out;
+        transform: rotate(0deg);
+        animation: 1200ms ease-in-out;
+      }
+
+      #responseLabel{
+        font-family: system, -apple-system,".SFNSDisplay-Regular", HelveticaNeue, LucidaGrande;
+        text-align: center;
+        position: fixed;
+        width: 100%;
+        height: 230px;
+        top: 70%;
+        left: 50%;
+        margin-top: -115px; /* Negative half of height. */
+        margin-left: -50%;
+        font-size: 50;
+      }
+      #form{
+        font-family: system, -apple-system,".SFNSDisplay-Regular", HelveticaNeue, LucidaGrande;
+        position: fixed;
+        width: 100%;
+        height: 230px;
+        top: 80%;
+        left: 50%;
+        margin-top: -115px; /* Negative half of height. */
+        margin-left: -50%;
+        font-size: 50;
+        text-align: center;
+      }
+      input[type="text"] {
+        width: 375px;
+        border: 1px solid #999;
+        border-radius: 5px;
+        height: 25px;
+        -webkit-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+        -moz-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+        box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+        text-align: center;
+      }
+      input[type="submit"] {
+        width: 75px;
+        border: 1px solid #999;
+        background-color: #fff;
+        border-radius: 5px;
+        height: 25px;
+        -webkit-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+        -moz-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+        box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+      }
+      #textField input[type="text"], #textField textarea
+      {
+          font-family: system, -apple-system,".SFNSDisplay-Regular", HelveticaNeue, LucidaGrande;
+          font-size: 13px;
+          margin-bottom: 5px;
+          padding: 4px;
+          border: solid 1px #85b1de;
+          width: 300px;
+          text-align: center;
+      }
+    </style>
+    <script>
+      var running = false;
+      var nodding = false;
+      var faceView;
+
+      function onload()
+      {
+        faceView = document.getElementById('faceImage');
+        start();
+      }
+      function start()
+      {
+        running = true;
+        faceView.src = "assets/KnockKnockImages/neutral1.png";
+        planToBlink();
+        planToNod();
+      }
+      function stop()
+      {
+        running = false;
+      }
+      function planToBlink()
+      {
+        var timeUntilBlink = randomInterval(1, 4);
+        setTimeout(blink, timeUntilBlink * 1000);
+      }
+      function blink()
+      {
+        faceView.src = "assets/KnockKnockImages/neutral2.png";
+        planToUnblink();
+      }
+      function planToUnblink()
+      {
+        var timeUntilBlink = randomInterval(0.05, 0.15);
+        setTimeout(Unblink, timeUntilBlink * 1000);
+      }
+      function Unblink()
+      {
+        faceView.src = "assets/KnockKnockImages/neutral1.png";
+        planToBlink();
+      }
+      function planToNod()
+      {
+        var timeUntilNod = randomInterval(1, 6 * 1000);
+        setTimeout(nod, timeUntilNod);
+      }
+      function nod()
+      {
+        nodding = true;
+        var rotation;
+        if (flipACoin()) {
+          rotation = 11.1;
+        }
+        else {
+          rotation = -11.1;
+        }
+        faceView.style.transform = 'rotate('+rotation+'deg)';
+        setTimeout(finishNod, 0.2 * 1000);
+      }
+      function finishNod()
+      {
+        faceView.style.transform = 'rotate(0)';
+        nodding = false;
+        planToNod();
+      }
+      function flipACoin()
+      {
+        return Math.floor(Math.random() * 2) == 1;
+      }
+      function randomInterval(lowerBound, upperBound)
+      {
+        return lowerBound + (Math.random() * upperBound);
+      }
+      document.getElementById("submit").addEventListener("click", function ()
+      {
+        window.location = "?message="+ document.getElementById("textField").value;
+      });
+    </script>
+  </head>
+  <body onload="onload()">
+    <div class="blur"></div>
+    <div class="face"><img id="faceImage" src="assets/KnockKnockImages/neutral1.png" /></div>
+    <p id="responseLabel"><b>{{response}}</b></p>
+    <form id="form">
+        <input id="textField" name="message" type="text" placeholder="{{placeholder}}">
+        <input id="submit" type="submit" value="Submit" title="Submit">
+    </form>
+  </body>
+</html>
