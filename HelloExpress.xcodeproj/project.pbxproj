@@ -28,10 +28,10 @@
 		96E0C04F1C6D435B00CA926F /* PathToRegex.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96E0C04C1C6D435B00CA926F /* PathToRegex.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		96E0C0501C6D435B00CA926F /* Regex.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96E0C04D1C6D435B00CA926F /* Regex.framework */; };
 		96E0C0511C6D435B00CA926F /* Regex.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 96E0C04D1C6D435B00CA926F /* Regex.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		CD83F2C51D3DBBA90016D7A5 /* Conversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD83F2BF1D3DBBA80016D7A5 /* Conversation.swift */; };
-		CD83F2C81D3DBBA90016D7A5 /* FaceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD83F2C21D3DBBA90016D7A5 /* FaceViewController.swift */; };
 		CD83F2C91D3DBBA90016D7A5 /* JokePattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD83F2C31D3DBBA90016D7A5 /* JokePattern.swift */; };
 		CD83F2CA1D3DBBA90016D7A5 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD83F2C41D3DBBA90016D7A5 /* Utils.swift */; };
+		CD83F2CC1D3FAA8C0016D7A5 /* Conversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD83F2CB1D3FAA8C0016D7A5 /* Conversation.swift */; };
+		CD83F2CE1D3FAAA40016D7A5 /* FaceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD83F2CD1D3FAAA40016D7A5 /* FaceViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -74,10 +74,10 @@
 		96AB7D1C1C80E00900F638F9 /* PathKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PathKit.framework; path = Carthage/Build/Mac/PathKit.framework; sourceTree = "<group>"; };
 		96E0C04C1C6D435B00CA926F /* PathToRegex.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PathToRegex.framework; path = Carthage/Build/Mac/PathToRegex.framework; sourceTree = "<group>"; };
 		96E0C04D1C6D435B00CA926F /* Regex.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Regex.framework; path = Carthage/Build/Mac/Regex.framework; sourceTree = "<group>"; };
-		CD83F2BF1D3DBBA80016D7A5 /* Conversation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Conversation.swift; path = ../../../Desktop/Conversation.swift; sourceTree = "<group>"; };
-		CD83F2C21D3DBBA90016D7A5 /* FaceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FaceViewController.swift; path = ../../../Desktop/FaceViewController.swift; sourceTree = "<group>"; };
 		CD83F2C31D3DBBA90016D7A5 /* JokePattern.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = JokePattern.swift; path = ../../../Desktop/JokePattern.swift; sourceTree = "<group>"; };
 		CD83F2C41D3DBBA90016D7A5 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Utils.swift; path = ../../../Desktop/Utils.swift; sourceTree = "<group>"; };
+		CD83F2CB1D3FAA8C0016D7A5 /* Conversation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Conversation.swift; sourceTree = "<group>"; };
+		CD83F2CD1D3FAAA40016D7A5 /* FaceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FaceViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,8 +126,8 @@
 			isa = PBXGroup;
 			children = (
 				9609B4E91C5FC19B00141FAB /* main.swift */,
-				CD83F2BF1D3DBBA80016D7A5 /* Conversation.swift */,
-				CD83F2C21D3DBBA90016D7A5 /* FaceViewController.swift */,
+				CD83F2CB1D3FAA8C0016D7A5 /* Conversation.swift */,
+				CD83F2CD1D3FAAA40016D7A5 /* FaceViewController.swift */,
 				CD83F2C31D3DBBA90016D7A5 /* JokePattern.swift */,
 				CD83F2C41D3DBBA90016D7A5 /* Utils.swift */,
 			);
@@ -220,11 +220,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CD83F2C51D3DBBA90016D7A5 /* Conversation.swift in Sources */,
+				CD83F2CC1D3FAA8C0016D7A5 /* Conversation.swift in Sources */,
 				CD83F2C91D3DBBA90016D7A5 /* JokePattern.swift in Sources */,
 				9609B4EA1C5FC19B00141FAB /* main.swift in Sources */,
+				CD83F2CE1D3FAAA40016D7A5 /* FaceViewController.swift in Sources */,
 				CD83F2CA1D3DBBA90016D7A5 /* Utils.swift in Sources */,
-				CD83F2C81D3DBBA90016D7A5 /* FaceViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

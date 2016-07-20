@@ -54,30 +54,6 @@ app.get("/knockknock"){ (request:Request<AnyContent>)->Action<AnyContent> in
 
 }
 
-app.get("/knockk") { (request:Request<AnyContent>)->Action<AnyContent> in
-    let priorState = faceVC.conversation.currentState
-    if let message = request.query["message"]?.first
-    {
-        faceVC.receive(message)
-    }
-    faceVC.transitionFromState(priorState, toState: faceVC.conversation.currentState)
-    print("HERE")
-    print(faceVC.responseDicationary)
-    if let emotion = faceVC.responseDicationary["emotion"]
-    {
-        return Action<AnyContent>.render(emotion, context: faceVC.responseDicationary)
-    }
-    else
-    {
-        faceVC.conversation.transitionObserver = { oldState, newState in
-            faceVC.transitionFromState(oldState, toState: newState)
-        }
-        faceVC.transitionFromState(.WaitingForKnock, toState: .WaitingForKnock)
-        print(faceVC.responseDicationary)
-        return Action<AnyContent>.render("Knock", context: faceVC.responseDicationary)
-    }
-}
-
 app.get("/hello") { request in
     return Action.ok(AnyContent(str: "<h1>Hello Express!!!</h1>", contentType: "text/html"))
 }
