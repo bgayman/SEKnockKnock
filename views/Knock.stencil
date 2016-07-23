@@ -101,6 +101,7 @@
       var running = false;
       var nodding = false;
       var faceView;
+      var uuid = "{{uuid}}";
 
       function onload()
       {
@@ -170,10 +171,12 @@
       {
         return lowerBound + (Math.random() * upperBound);
       }
-      document.getElementById("submit").addEventListener("click", function ()
+      function submitFunction()
       {
-        window.location = "?message="+ document.getElementById("textField").value;
-      });
+        var location = "?message=" + document.getElementById("textField").value + "&uuid=" + uuid;
+        console.log(location);
+        window.location = location;
+      }
     </script>
   </head>
   <body onload="onload()">
@@ -182,7 +185,7 @@
     <p id="responseLabel"><b>{{response}}</b></p>
     <form id="form">
         <input id="textField" name="message" type="text" placeholder="{{placeholder}}">
-        <input id="submit" type="submit" value="Submit" title="Submit">
+        <button id="submit" type="button" value="Submit" title="Submit" onclick="submitFunction()">Submit</button>
     </form>
   </body>
 </html>

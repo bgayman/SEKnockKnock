@@ -100,6 +100,8 @@
       var running = false;
       var blocking = false;
       var faceView;
+      var uuid = {{uuid}};
+
       function onload()
       {
         faceView = document.getElementById('faceImage');
@@ -164,6 +166,10 @@
       {
         window.location = "?message="+ document.getElementById("textField").value;
       });
+      document.getElementById("submit").addEventListener("click", function ()
+      {
+        window.location = "?message="+ document.getElementById("textField").value + "?uuid=" + uuid;
+       });
     </script>
   </head>
   <body onload="onload()">

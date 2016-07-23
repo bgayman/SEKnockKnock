@@ -100,6 +100,8 @@
       var running = false;
       var faceView;
       var lastTiltAdjustment = 1;
+      var uuid = {{uuid}};
+
       function onload()
       {
         faceView = document.getElementById('faceImage');
@@ -144,7 +146,7 @@
       }
       document.getElementById("submit").addEventListener("click", function ()
       {
-        window.location = "?message="+ document.getElementById("textField").value;
+        window.location = "?message="+ document.getElementById("textField").value + "?uuid=" + uuid;
       });
     </script>
   </head>

@@ -22,34 +22,29 @@ app.listen(9999).onSuccess { server in
 }
 
 app.get("/knockknock"){ (request:Request<AnyContent>)->Action<AnyContent> in
-    let priorState = faceVC.conversation.currentState
-    if var message = request.query["message"]?.first
+    if var message = request.query["message"]?.first, var uuid = request.query["uuid"]?.first
     {
+        let priorState = faceVC.conversations[uuid]!.currentState
         message = message.stringByReplacingOccurrencesOfString("+", withString: " ")
-        print(message)
-        faceVC.receive(message)
-        faceVC.transitionFromState(priorState, toState: faceVC.conversation.currentState)
-        print(faceVC.conversation.currentState)
-        if let emotion = faceVC.responseDicationary["emotion"]
+        faceVC.receive(message, uuid: uuid)
+        faceVC.transitionFromState(priorState, toState: faceVC.conversations[uuid]!.currentState, withUUID: uuid)
+        if let emotion = faceVC.responseDicationary[uuid]!["emotion"]
         {
-            return Action<AnyContent>.render(emotion, context: faceVC.responseDicationary)
+            return Action<AnyContent>.render(emotion, context: faceVC.responseDicationary[uuid]!)
         }
         else
         {
-            faceVC.conversation.transitionObserver = { oldState, newState in
-                faceVC.transitionFromState(oldState, toState: newState)
+            faceVC.conversations[uuid]!.transitionObserver = { oldState, newState in
+                faceVC.transitionFromState(oldState, toState: newState, withUUID: uuid)
             }
-            faceVC.transitionFromState(.WaitingForKnock, toState: .ProcessingKnock(knock: message))
-            return Action<AnyContent>.render("Knock", context: faceVC.responseDicationary)
+            faceVC.transitionFromState(.WaitingForKnock, toState: .ProcessingKnock(knock: message), withUUID: uuid)
+            return Action<AnyContent>.render("Knock", context: faceVC.responseDicationary[uuid]!)
         }
     }
     else
     {
-        faceVC.conversation.transitionObserver = { oldState, newState in
-            faceVC.transitionFromState(oldState, toState: newState)
-        }
-        faceVC.transitionFromState(.WaitingForKnock, toState: .WaitingForKnock)
-        return Action<AnyContent>.render("Knock", context: faceVC.responseDicationary)
+        let uuid = faceVC.transitionFromState(.WaitingForKnock, toState: .WaitingForKnock, withUUID: nil)
+        return Action<AnyContent>.render("Knock", context: faceVC.responseDicationary[uuid!])
     }
 
 }

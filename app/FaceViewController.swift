@@ -6,6 +6,8 @@
 //  Copyright © 2016 Brad G. All rights reserved.
 //
 
+import Foundation
+
 enum Emotion
 {
     case Neutral
@@ -15,8 +17,8 @@ enum Emotion
 }
 
 class FaceViewController{
-    let conversation = Conversation()
-    var responseDicationary = [String:String]()
+    var conversations = [String:Conversation]()
+    var responseDicationary = [String:[String:String]]()
     
     var patterns: [JokePattern] = [
         JokePattern(setup: "boo", punchline: "cry", response: "That's a classic!", face: .Laughing),
@@ -31,72 +33,79 @@ class FaceViewController{
     
     // MARK: - Methods for processing the conversation
     
-    func processConversationLine(text: String)
+    func processConversationLine(text: String, uuid: String)
     {
-        switch self.conversation.currentState {
+        guard self.conversations[uuid] != nil else { return }
+        switch self.conversations[uuid]!.currentState {
         case .WaitingForKnock:
-            self.responseDicationary["placeholder"] = "Who's there?"
-            self.conversation.transitionToState(.ProcessingKnock(knock: text))
+            self.responseDicationary[uuid]!["placeholder"] = "Who's there?"
+            self.conversations[uuid]!.transitionToState(.ProcessingKnock(knock: text))
         case .ProcessingKnock:
             fatalError("Expected to synchronously transition to .WaitingForReply")
             break
         case .WaitingForReply:
-            self.responseDicationary["placeholder"] = "\(text) who?"
-            self.conversation.transitionToState(.WaitingForPunchline(who: text))
+            self.responseDicationary[uuid]!["placeholder"] = "\(text) who?"
+            self.conversations[uuid]!.transitionToState(.WaitingForPunchline(who: text))
         case .WaitingForPunchline(let who):
-            self.conversation.transitionToState(.ProcessingPunchline(who: who, punchLine: text))
+            self.conversations[uuid]!.transitionToState(.ProcessingPunchline(who: who, punchLine: text))
         case .ProcessingPunchline:
             fatalError("Expected to synchronously transition to response!")
             break
         case .Response:
-            self.responseDicationary["placeholder"] = "Knock knock"
-            self.conversation.transitionToState(.ProcessingKnock(knock: text))
+            self.responseDicationary[uuid]!["placeholder"] = "Knock knock"
+            self.conversations[uuid]!.transitionToState(.ProcessingKnock(knock: text))
         }
     }
     
-    func replyWithMessage(message: String)
+    func replyWithMessage(message: String, uuid: String)
     {
-        self.responseDicationary["response"] = message
+        self.responseDicationary[uuid]!["response"] = message
     }
     
     // MARK: - Private helper methods
     
-    func transitionFromState(oldState: Conversation.State, toState newState: Conversation.State)
+    func transitionFromState(oldState: Conversation.State, toState newState: Conversation.State, withUUID uuid: String?) -> String?
     {
         switch newState {
         case .WaitingForKnock:
-            self.responseDicationary = [String: String]()
-            self.responseDicationary["placeholder"] = "Knock Knock"
-            self.responseDicationary["emotion"] = "Knock"
-            self.replyWithMessage(" ")
+            let uuid = self.createConversation()
+            self.responseDicationary[uuid]!["placeholder"] = "Knock Knock"
+            self.responseDicationary[uuid]!["emotion"] = "Knock"
+            self.replyWithMessage(" ", uuid: uuid)
+            return uuid
         case .ProcessingKnock(let knock):
-            self.responseDicationary = [String: String]()
+            self.responseDicationary[uuid!] = [String: String]()
+            self.responseDicationary[uuid!]!["uuid"] = uuid!
             let normalized = normalize(knock)
             if normalized.containsString("knock knock")
             {
-                self.responseDicationary["emotion"] = "Knock"
-                self.responseDicationary["placeholder"] = "Who's there?"
-                replyWithMessage("Who's there?")
-                self.conversation.transitionToState(.WaitingForReply)
+                self.responseDicationary[uuid!]!["emotion"] = "Knock"
+                self.responseDicationary[uuid!]!["placeholder"] = "Who's there?"
+                replyWithMessage("Who's there?", uuid: uuid!)
+                self.conversations[uuid!]!.transitionToState(.WaitingForReply)
             }
             else
             {
-                self.responseDicationary["placeholder"] = "Knock Knock"
-                self.responseDicationary["emotion"] = "Knock"
-                self.replyWithMessage("I only understand\nknock, knock jokes")
-                self.conversation.transitionToState(.Response(message: "I only understand\nknock, knock jokes", face: .Confused))
+                self.responseDicationary[uuid!]!["placeholder"] = "Knock Knock"
+                self.responseDicationary[uuid!]!["emotion"] = "Knock"
+                self.replyWithMessage("I only understand\nknock, knock jokes", uuid: uuid!)
+                self.conversations[uuid!]!.transitionToState(.Response(message: "I only understand\nknock, knock jokes", face: .Confused))
             }
+            return nil
         case .WaitingForReply:
-            break
+            return nil
         case .WaitingForPunchline(let who):
-            self.responseDicationary = [String: String]()
-            replyWithMessage("\(who) who?")
-            self.responseDicationary["emotion"] = "Knock"
-            self.responseDicationary["placeholder"] = "\(who) who?"
+            self.responseDicationary[uuid!] = [String: String]()
+            replyWithMessage("\(who) who?", uuid: uuid!)
+            self.responseDicationary[uuid!]!["uuid"] = uuid!
+            self.responseDicationary[uuid!]!["emotion"] = "Knock"
+            self.responseDicationary[uuid!]!["placeholder"] = "\(who) who?"
+            return nil
         case .ProcessingPunchline(let who, let punchline):
-            self.responseDicationary = [String: String]()
-            replyWithMessage("...")
-            self.responseDicationary["placeholder"] = "..."
+            self.responseDicationary[uuid!] = [String: String]()
+            replyWithMessage("...", uuid: uuid!)
+            self.responseDicationary[uuid!]!["uuid"] = uuid!
+            self.responseDicationary[uuid!]!["placeholder"] = "..."
             let normalizedWho = normalize(who)
             let normalizedPunchline = normalize(punchline)
             var response: (String, JokePattern.Face)? = nil
@@ -114,33 +123,38 @@ class FaceViewController{
             
             if let (message, face) = response
             {
-                self.conversation.transitionToState(.Response(message: message, face: face))
+                self.conversations[uuid!]!.transitionToState(.Response(message: message, face: face))
             }
             else
             {
-                self.conversation.transitionToState(.Response(message: "I don't get it", face: .Confused))
+                self.conversations[uuid!]!.transitionToState(.Response(message: "I don't get it", face: .Confused))
             }
+            return nil
         case .Response(let message, let face):
-            self.showReactionWithMessage(message, face: face)
+            self.responseDicationary[uuid!]!["uuid"] = uuid!
+            self.showReactionWithMessage(message, face: face, uuid: uuid!)
+            return nil
         }
     }
     
-    func showReactionWithMessage(message: String, face: JokePattern.Face)
+    func showReactionWithMessage(message: String, face: JokePattern.Face, uuid: String)
     {
         let emotion = self.jokeFaceToEmotion(face)
         
-        self.replyWithMessage("...")
-        
-        self.replyWithMessage(message)
-        switch emotion {
-        case .Annoyed:
-            self.responseDicationary["emotion"] = "Annoyed"
-        case .Laughing:
-            self.responseDicationary["emotion"] = "Laughing"
-        case .Confused:
-            self.responseDicationary["emotion"] = "Confused"
-        case .Neutral:
-            self.responseDicationary["emotion"] = "Knock"
+        self.replyWithMessage("...", uuid: uuid)
+        if var responseDict = self.responseDicationary[uuid]
+        {
+            self.replyWithMessage(message, uuid: uuid)
+            switch emotion {
+            case .Annoyed:
+                responseDict["emotion"] = "Annoyed"
+            case .Laughing:
+                responseDict["emotion"] = "Laughing"
+            case .Confused:
+                responseDict["emotion"] = "Confused"
+            case .Neutral:
+                responseDict["emotion"] = "Knock"
+            }
         }
     }
     
@@ -154,11 +168,6 @@ class FaceViewController{
         case .Confused:
             return .Confused
         }
-    }
-    
-    func returnToWaitingToKnockAfter()
-    {
-        self.conversation.transitionToState(.WaitingForKnock)
     }
     
     func addJokePattern(pattern: JokePattern)
@@ -180,13 +189,22 @@ class FaceViewController{
         
         patterns.append(pattern)
     }
+    
+    func createConversation() -> String
+    {
+        let uuid = NSUUID()
+        self.conversations[uuid.UUIDString] = Conversation()
+        self.responseDicationary[uuid.UUIDString] = [String:String]()
+        self.responseDicationary[uuid.UUIDString]!["uuid"] = uuid.UUIDString
+        return uuid.UUIDString
+    }
 }
 
 extension FaceViewController
 {
-    func receive(message: String)
+    func receive(message: String, uuid: String)
     {
-        self.processConversationLine(message)
+        self.processConversationLine(message, uuid: uuid)
     }
 }
 
